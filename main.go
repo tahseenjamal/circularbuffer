@@ -3,12 +3,19 @@ package main
 import "fmt"
 
 type RingBuffer struct {
-	buffer []string
+	buffer []interface{}
 
 	length int
 }
 
-func (this *RingBuffer) Add(uuid string) bool {
+func (this *RingBuffer) Init(length int) {
+
+	this.buffer = make([]interface{}, 0)
+	this.length = length
+
+}
+
+func (this *RingBuffer) Add(uuid interface{}) bool {
 
 	for loop := 0; loop < len(this.buffer); loop++ {
 
@@ -39,21 +46,42 @@ func (this *RingBuffer) Print() {
 
 func main() {
 
-	newbuf := RingBuffer{make([]string, 0), 3}
+	var intBuffer RingBuffer
 
-	newbuf.Add("a")
-	newbuf.Print()
-	newbuf.Add("b")
-	newbuf.Print()
-	newbuf.Add("a")
-	newbuf.Print()
-	newbuf.Add("c")
-	newbuf.Print()
-	newbuf.Add("d")
-	newbuf.Print()
-	newbuf.Add("e")
-	newbuf.Print()
-	newbuf.Add("f")
-	newbuf.Print()
+	intBuffer.Init(3)
+
+	intBuffer.Add(1)
+	intBuffer.Print()
+	intBuffer.Add(2)
+	intBuffer.Print()
+	intBuffer.Add(3)
+	intBuffer.Print()
+	intBuffer.Add(4)
+	intBuffer.Print()
+	intBuffer.Add(4)
+	intBuffer.Print()
+	intBuffer.Add(5)
+	intBuffer.Print()
+	intBuffer.Add(6)
+	intBuffer.Print()
+
+	var stringBuffer RingBuffer
+
+	stringBuffer.Init(3)
+
+	stringBuffer.Add("a")
+	stringBuffer.Print()
+	stringBuffer.Add("b")
+	stringBuffer.Print()
+	stringBuffer.Add("a")
+	stringBuffer.Print()
+	stringBuffer.Add("c")
+	stringBuffer.Print()
+	stringBuffer.Add("d")
+	stringBuffer.Print()
+	stringBuffer.Add("e")
+	stringBuffer.Print()
+	stringBuffer.Add("f")
+	stringBuffer.Print()
 
 }

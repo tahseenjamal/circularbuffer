@@ -8,7 +8,7 @@ type RingBuffer struct {
 	//this is the buffer variable of type interface so that any variable type can be used and not limited to string or int or just one type. Power of interface
 	buffer []interface{}
 
-	//using map to read key uuid key instead of looping through array as that would be very slow
+	//using map to find uuid key instead of looping through array as that would be very slow for a large stack. Again here also using interface instead of a variable
 	keys map[interface{}]bool
 
 	//this is size of stack, more elements added would push the earlier ones behind, draining out olds ones out of stack to maintain stack size "length"

@@ -2,11 +2,14 @@ package main
 
 import "fmt"
 
-// Created a structure by the name of RingBuffer
+// Created a structure by the name of RingBuffer. Observe array and map both used. Arrays are slow to find a key if stored instead them but are required as we have to folllow FIFO but at the same time use map to find key from the stack of keys are map is fast in finding
 type RingBuffer struct {
 
 	//this is the buffer variable of type interface so that any variable type can be used and not limited to string or int or just one type. Power of interface
 	buffer []interface{}
+
+	//using map to read key uuid key instead of looping through array as that would be very slow
+	keys map[interface{}]bool
 
 	//this is size of stack, more elements added would push the earlier ones behind, draining out olds ones out of stack to maintain stack size "length"
 	length int
@@ -18,6 +21,9 @@ func (this *RingBuffer) Init(length int) {
 
 	this.buffer = make([]interface{}, 0)
 
+	//intiailising map stack for stocking uuid
+	this.keys = make(map[interface{}]bool)
+
 	//length defined for the length of the stack
 	this.length = length
 
@@ -25,23 +31,29 @@ func (this *RingBuffer) Init(length int) {
 
 func (this *RingBuffer) Add(uuid interface{}) bool {
 
-	//Looping to find if the uuid exists as only unique UUID is added
-	for loop := 0; loop < len(this.buffer); loop++ {
+	//Receive tuples, ignoring key value in case present as I already have uuid there is why _
+	//if uuid present then key_present boolean value turns true
+	_, key_present := this.keys[uuid]
 
-		//if UUID is found then return false without even adding
-		if this.buffer[loop] == uuid {
-			return false
+	//exit without adding uuid to ring buffer as key already present. Return false
+	if key_present {
 
-		}
-
+		return false
 	}
 
-	//if UUID not found then you can add it to the stack
+	// UUID not found in stack so add it to the array stack
 	this.buffer = append(this.buffer, uuid)
+
+	//like wise add it in the map
+	this.keys[uuid] = true
 
 	//check if the stack after append has increased beyond the length defined, if so then trim it by pushing out of stack the head element
 	if len(this.buffer) > this.length {
 
+		//before trimming the array, delete that key from map so that map also has only those keys that are in array
+		delete(this.keys, this.buffer[0])
+
+		//trimming the array by removing head element
 		this.buffer = this.buffer[1 : this.length+1]
 
 	}
@@ -53,7 +65,7 @@ func (this *RingBuffer) Add(uuid interface{}) bool {
 // print the stack
 func (this *RingBuffer) Print() {
 
-	fmt.Println(this.buffer)
+	fmt.Println(this.buffer, this.keys)
 
 }
 
